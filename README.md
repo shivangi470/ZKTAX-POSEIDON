@@ -32,34 +32,6 @@ Below is a streamlined step-by-step guide to implement, compile, and deploy the 
 ---
 
 #### **2. Write the ZKTax Circuit**
-- Save the following as `taxCompliance.circom`:
-```circom
-pragma circom 2.0.0;
-
-include "poseidon.circom";
-
-template ZKTax() {
-    signal input income;
-    signal input deductions;
-    signal input exemptions;
-    signal input taxPaid; // Tax claimed
-    signal output taxVerified;
-    
-    signal private taxableIncome = income - (deductions + exemptions);
-    signal private expectedTax = taxableIncome * 10 / 100; // 10% tax rate
-
-    // Poseidon hash for integrity check
-    signal input hashInput;
-    signal output hashOutput;
-    hashOutput <== Poseidon([income, deductions, exemptions]);
-
-    // Verification
-    taxVerified <== (expectedTax == taxPaid);
-}
-
-component main = ZKTax();
-```
-
 ---
 
 #### **3. Compile the Circuit**
@@ -123,16 +95,7 @@ This generates:
 
 #### **6. Generate Proof**
 1. **Create Input JSON**:
-   Example: `inputs.json`
-   ```json
-   {
-       "income": 100000,
-       "deductions": 20000,
-       "exemptions": 10000,
-       "taxPaid": 7000,
-       "hashInput": [100000, 20000, 10000]
-   }
-   ```
+ 
 
 2. **Generate Witness**:
    ```bash
@@ -184,9 +147,4 @@ This generates:
    snarkjs wtns export json witness.wtns witness.json
    ```
 
----
-
-### Notes:
-- Replace the tax calculation logic or Poseidon parameters as per your requirements.
-- Use Elastic IP or on-chain verification to integrate with your dApp.
 
